@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  discount_type: MyString
+  discount_value: 9.99
+  start_date: 2023-05-09
+  end_date: 2023-05-09
+  applicable: false
+  percentage: 9.99
+
+two:
+  name: MyString
+  discount_type: MyString
+  discount_value: 9.99
+  start_date: 2023-05-09
+  end_date: 2023-05-09
+  applicable: false
+  percentage: 9.99

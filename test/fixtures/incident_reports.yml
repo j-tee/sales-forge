@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  product_id: 1
+  incident_type: MyString
+  qty: 1
+  incident_date: 2023-05-09
+
+two:
+  product_id: 1
+  incident_type: MyString
+  qty: 1
+  incident_date: 2023-05-09

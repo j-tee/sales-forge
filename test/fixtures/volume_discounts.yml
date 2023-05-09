@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  upper_limit: 9.99
+  lower_limit: 9.99
+  discount_value: 9.99
+  percentage: false
+  applicable: false
+  store: one
+
+two:
+  name: MyString
+  upper_limit: 9.99
+  lower_limit: 9.99
+  discount_value: 9.99
+  percentage: false
+  applicable: false
+  store: two

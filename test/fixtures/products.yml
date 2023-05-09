@@ -1,0 +1,37 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  unit_price: 9.99
+  product_name: MyString
+  unit_cost: 9.99
+  country: MyString
+  manufacturer: MyString
+  mnf_date: 2023-05-09
+  exp_date: 2023-05-09
+  qty_in_stock: 1
+  category: one
+  description: MyText
+  supplier: MyString
+  qty_sold: 1
+  total_expired: 1
+  qty_stolen: 1
+  qty_damaged: 1
+  stock_id: 1
+
+two:
+  unit_price: 9.99
+  product_name: MyString
+  unit_cost: 9.99
+  country: MyString
+  manufacturer: MyString
+  mnf_date: 2023-05-09
+  exp_date: 2023-05-09
+  qty_in_stock: 1
+  category: two
+  description: MyText
+  supplier: MyString
+  qty_sold: 1
+  total_expired: 1
+  qty_stolen: 1
+  qty_damaged: 1
+  stock_id: 1
