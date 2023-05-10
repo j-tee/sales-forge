@@ -1,6 +1,19 @@
 require "active_support/core_ext/integer/time"
+require 'dotenv/load'
 
 Rails.application.configure do
+  config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+config.action_mailer.delivery_method = :smtp
+config.action_mailer.smtp_settings = {
+  user_name:      ENV['USER_NAME'],
+    password:       ENV['PASSWORD'],
+    domain:         "gmail.com",
+    address:       'smtp.gmail.com',
+    port:           587,
+    authentication: "plain",
+    enable_starttls_auto: true
+}
+
   # Settings specified here will take precedence over those in config/application.rb.
 
   # In the development environment your application's code is reloaded any time
