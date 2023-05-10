@@ -58,6 +58,19 @@ set :git_ssh_command, "ssh -i ~/.ssh/id_ed25519"
 # Uncomment the following to require manually verifying the host key before first deploy.
 # set :ssh_options, verify_host_key: :secure
 namespace :deploy do
+  after :published, :create_db do
+    on roles(:web) do
+      within release_path do
+        with rails_env: fetch(:rails_env) do
+          if test("[ ! -f #{fetch(:deploy_to)}/shared/config/database.yml ] || [ $(grep -c database #{fetch(:deploy_to)}/shared/config/database.yml) -eq 0 ]")
+            execute :rake, 'db:create'
+          else
+            info 'Skipping db:create, database already exists'
+          end
+        end
+      end
+    end
+  end
   desc "Setup a new deployment"
   task :setup do
     on roles(:app) do
