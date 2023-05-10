@@ -8,7 +8,9 @@ set :assets_roles, []
 
 set :user, 'deploy'
 set :linked_files, %w{config/database.yml}
-set :linked_files, %w{config/master.key}
+append :linked_files, 'config/master.key'
+
+
 
 # Default branch is :master
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
@@ -62,7 +64,7 @@ namespace :deploy do
     on roles(:web) do
       within release_path do
         with rails_env: fetch(:rails_env) do
-          if test("[ ! -f #{fetch(:deploy_to)}/shared/config/database.yml ] || [ $(grep -c database #{fetch(:deploy_to)}/shared/config/database.yml) -eq 0 ]")
+          unless test("bundle exec rails dbconsole -e production -c 'SELECT datname FROM pg_database WHERE datname = \"#{fetch(:application)}\"' | grep -q \"#{fetch(:application)}\"")
             execute :rake, 'db:create'
           else
             info 'Skipping db:create, database already exists'
