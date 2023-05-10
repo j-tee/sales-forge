@@ -82,5 +82,5 @@ test:
 production:
   <<: *default
   database: sales_forge_production
-  username: sales_forge
+  username: <%= ENV["DB_USER"] %>
   password: <%= ENV["SALES_FORGE_DATABASE_PASSWORD"] %>
