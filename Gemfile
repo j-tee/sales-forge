@@ -14,6 +14,7 @@ gem 'dotenv'
 gem 'activestorage'
 gem 'devise-async'
 gem 'jsonapi-serializer'
+gem "image_processing", ">= 1.2"
 gem 'rolify'
 gem 'kaminari'
 gem 'cancancan'

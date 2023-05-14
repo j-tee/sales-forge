@@ -12,6 +12,9 @@ config.action_mailer.smtp_settings = {
     authentication: "plain",
     enable_starttls_auto: true
 }
+# Store files locally.
+config.active_storage.service = :local
+
   config.cache_classes = true
 
   config.eager_load = true

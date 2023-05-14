@@ -13,6 +13,9 @@ config.action_mailer.smtp_settings = {
     authentication: "plain",
     enable_starttls_auto: true
 }
+# Store files locally.
+config.active_storage.service = :local
+
 
   # Settings specified here will take precedence over those in config/application.rb.
 
