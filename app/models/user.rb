@@ -1,6 +1,9 @@
 class User < ApplicationRecord
   rolify
   has_many :stores
+  has_one_attached :avatar do |attachable|
+    attachable.variant :thumb, resize_to_limit: [100, 100]
+  end
   include Devise::JWT::RevocationStrategies::JTIMatcher
 
   devise :database_authenticatable, :registerable, :confirmable, :validatable,

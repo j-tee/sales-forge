@@ -11,6 +11,7 @@ gem "bootsnap", require: false
 gem 'devise'
 gem 'devise-jwt'
 gem 'dotenv'
+gem 'activestorage'
 gem 'devise-async'
 gem 'jsonapi-serializer'
 gem 'rolify'
