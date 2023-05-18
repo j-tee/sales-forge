@@ -6,7 +6,7 @@ class User < ApplicationRecord
   end
   include Devise::JWT::RevocationStrategies::JTIMatcher
 
-  devise :database_authenticatable, :registerable, :confirmable, :validatable,
+  devise :database_authenticatable, :registerable, :recoverable, :confirmable, :validatable,
          :jwt_authenticatable, jwt_revocation_strategy: self
 
   require 'devise/async'
