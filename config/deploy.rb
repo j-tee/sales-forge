@@ -45,7 +45,7 @@ namespace :deploy do
   task :seed do
     on primary :db do
       within release_path do
-        with rails_env: fetch(:stage) do
+        with rails_env: fetch(:rails_env) do
           # Exclude the problematic migration
           exclude_migration = '20230511174738_add_unconfirmed_email_to_user'
           exclude_arg = "--skip=#{exclude_migration}"
