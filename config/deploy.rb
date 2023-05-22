@@ -32,6 +32,15 @@ set :ssh_options, {
 set :git_ssh_command, 'ssh -i ~/.ssh/id_ed25519'
 
 namespace :deploy do
+  task :seed do
+    on primary :db do
+      within release_path do
+        with rails_env: fetch(:stage) do
+          execute :rake, "db:seed"
+        end
+      end
+    end
+  end
   after :published, :create_db do
     on roles(:web) do
       within release_path do
