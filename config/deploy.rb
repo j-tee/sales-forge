@@ -43,7 +43,7 @@ namespace :deploy do
   before 'deploy:assets:precompile', 'copy_required_files'
 
   # Exclude migrations
-  Rake::Task['db:migrate'].clear_actions
+  Rake::Task['deploy:migrate'].clear_actions
   desc 'Load database schema'
   task :db_schema_load do
     on primary :db do
