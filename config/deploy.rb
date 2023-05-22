@@ -42,8 +42,10 @@ namespace :deploy do
 
   before 'deploy:assets:precompile', 'copy_required_files'
 
+  # Exclude migrations
+  Rake::Task['db:migrate'].clear_actions
   desc 'Load database schema'
-  task :load_schema do
+  task :db_schema_load do
     on primary :db do
       within release_path do
         with rails_env: fetch(:stage) do
@@ -52,8 +54,6 @@ namespace :deploy do
       end
     end
   end
-
-  after :published, :load_schema
 
   desc 'Setup a new deployment'
   task :setup do
