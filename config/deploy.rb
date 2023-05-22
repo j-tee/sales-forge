@@ -57,24 +57,14 @@ namespace :deploy do
       # For example, creating required directories, setting up environment variables, etc.
     end
   end
-  desc 'Start Rails server'
-  task :start_server do
-    on roles(:app) do
-      within current_path do
-        execute :bundle, 'exec rails server -e production'
-      end
+  desc 'Restart application'
+  task :restart do
+    on roles(:app), in: :sequence, wait: 5 do
+      execute :touch, release_path.join('tmp/restart.txt')
     end
   end
-  after 'deploy:published', 'deploy:start_server'
 
-  # desc 'Restart application'
-  # task :restart do
-  #   on roles(:app), in: :sequence, wait: 5 do
-  #     execute :touch, release_path.join('tmp/restart.txt')
-  #   end
-  # end
-
-  # after :publishing, :restart
+  after :publishing, :restart
 end
 set :default_env, {
   PATH: '$HOME/.asdf/bin:$HOME/.asdf/shims:$PATH'
