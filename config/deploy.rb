@@ -42,14 +42,29 @@ namespace :deploy do
 
   before 'deploy:assets:precompile', 'copy_required_files'
 
-  # Exclude migrations
-  Rake::Task['deploy:migrate'].clear_actions
-  desc 'Load database schema'
-  task :db_schema_load do
+  task :seed do
     on primary :db do
       within release_path do
-        with rails_env: fetch(:stage) do
-          execute :rake, 'db:schema:load'
+        with rails_env: fetch(:rails_env) do
+          # Exclude the problematic migration
+          exclude_migration = '20230511174738_add_unconfirmed_email_to_user'
+          exclude_arg = "--skip=#{exclude_migration}"
+
+          execute :rake, "db:seed #{exclude_arg}"
+        end
+      end
+    end
+  end
+
+  after :published, :create_db do
+    on roles(:web) do
+      within release_path do
+        with rails_env: fetch(:rails_env) do
+          if test("bundle exec rails dbconsole -e production -c 'SELECT datname FROM pg_database WHERE datname = \"#{fetch(:application)}\"' | grep -q \"#{fetch(:application)}\"")
+            info 'Skipping db:create, database already exists'
+          else
+            execute :rake, 'db:create'
+          end
         end
       end
     end
