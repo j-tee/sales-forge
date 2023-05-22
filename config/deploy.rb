@@ -20,7 +20,13 @@ set :deploy_to, '/var/www/sales-forge'
 append :linked_files, 'config/database.yml', 'config/master.key'
 
 # Default value for linked_dirs is []
-append :linked_dirs, 'log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'tmp/webpacker', 'public/system', 'vendor', 'storage'
+append :linked_dirs, 'log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'tmp/webpacker', 'public/system', 'vendor',
+       'storage'
+
+# Set up Passenger
+set :passenger_restart_with_touch, true
+set :passenger_in_gemfile, true
+set :passenger_restart_options, -> { "#{deploy_to}/current" }
 
 set :default_shell, '/bin/bash -l'
 set :ssh_options, {
@@ -31,30 +37,19 @@ set :ssh_options, {
 set :git_ssh_command, 'ssh -i ~/.ssh/id_ed25519'
 
 namespace :deploy do
-  desc 'Copy required files'
-  task :copy_required_files do
-    on roles(:app) do
-      upload! 'config/master.key', "#{release_path}/config/master.key"
-      upload! 'config/database.yml', "#{release_path}/config/database.yml"
-      upload! '.env', "#{release_path}/.env"
-    end
-  end
-
-  before 'deploy:assets:precompile', 'copy_required_files'
-
-  # Exclude migrations
-  Rake::Task['deploy:migrate'].clear_actions
-  desc 'Load database schema'
-  task :db_schema_load do
-    on primary :db do
+  after :published, :create_db do
+    on roles(:web) do
       within release_path do
-        with rails_env: fetch(:stage) do
-          execute :rake, 'db:schema:load'
+        with rails_env: fetch(:rails_env) do
+          if test("bundle exec rails dbconsole -e production -c 'SELECT datname FROM pg_database WHERE datname = \"#{fetch(:application)}\"' | grep -q \"#{fetch(:application)}\"")
+            info 'Skipping db:create, database already exists'
+          else
+            execute :rake, 'db:create'
+          end
         end
       end
     end
   end
-
   desc 'Setup a new deployment'
   task :setup do
     on roles(:app) do
@@ -62,17 +57,25 @@ namespace :deploy do
       # For example, creating required directories, setting up environment variables, etc.
     end
   end
-
-  desc 'Restart application'
-  task :restart do
-    on roles(:app), in: :sequence, wait: 5 do
-      execute :touch, release_path.join('tmp/restart.txt')
+  desc 'Start Rails server'
+  task :start_server do
+    on roles(:app) do
+      within current_path do
+        execute :bundle, 'exec rails server -e production'
+      end
     end
   end
+  after 'deploy:published', 'deploy:start_server'
 
-  after :published, :restart
+  # desc 'Restart application'
+  # task :restart do
+  #   on roles(:app), in: :sequence, wait: 5 do
+  #     execute :touch, release_path.join('tmp/restart.txt')
+  #   end
+  # end
+
+  # after :publishing, :restart
 end
-
 set :default_env, {
   PATH: '$HOME/.asdf/bin:$HOME/.asdf/shims:$PATH'
 }
