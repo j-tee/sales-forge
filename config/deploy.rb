@@ -71,9 +71,9 @@ set :default_env, {
 desc 'Copy required files'
 task :copy_required_files do
   on roles(:app) do
-    execute "cp #{shared_path}/config/master.key #{release_path}/config/"
-    execute "cp #{shared_path}/config/database.yml #{release_path}/config/"
-    execute "cp #{shared_path}/.env #{release_path}/"
+    upload! 'config/master.key', "#{release_path}/config/master.key"
+    upload! 'config/database.yml', "#{release_path}/config/database.yml"
+    upload! '.env', "#{release_path}/.env"
   end
 end
 
