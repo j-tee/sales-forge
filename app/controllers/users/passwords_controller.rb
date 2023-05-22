@@ -1,6 +1,17 @@
 # frozen_string_literal: true
 
 class Users::PasswordsController < Devise::PasswordsController
+  respond_to :json
+  private
+
+  def respond_with(_resource, _opts = {})
+    if resource.errors.empty?
+      render json: { status: 'success', message: 'An email with instructions to reset your password has been sent to your inbox.' }
+    else
+      render json: { status: 'error', errors: resource.errors.full_messages }
+    end
+  end
+
   # GET /resource/password/new
   # def new
   #   super
