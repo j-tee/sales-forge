@@ -20,8 +20,7 @@ set :deploy_to, '/var/www/sales-forge'
 append :linked_files, 'config/database.yml', 'config/master.key'
 
 # Default value for linked_dirs is []
-append :linked_dirs, 'log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'tmp/webpacker', 'public/system', 'vendor',
-       'storage'
+append :linked_dirs, 'log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'tmp/webpacker', 'public/system', 'vendor', 'storage'
 
 set :default_shell, '/bin/bash -l'
 set :ssh_options, {
@@ -32,15 +31,31 @@ set :ssh_options, {
 set :git_ssh_command, 'ssh -i ~/.ssh/id_ed25519'
 
 namespace :deploy do
+  desc 'Copy required files'
+  task :copy_required_files do
+    on roles(:app) do
+      upload! 'config/master.key', "#{release_path}/config/master.key"
+      upload! 'config/database.yml', "#{release_path}/config/database.yml"
+      upload! '.env', "#{release_path}/.env"
+    end
+  end
+
+  before 'deploy:assets:precompile', 'copy_required_files'
+
   task :seed do
     on primary :db do
       within release_path do
         with rails_env: fetch(:stage) do
-          execute :rake, "db:seed"
+          # Exclude the problematic migration
+          exclude_migration = '20230511174738_add_unconfirmed_email_to_user'
+          exclude_arg = "--skip=#{exclude_migration}"
+
+          execute :rake, "db:seed #{exclude_arg}"
         end
       end
     end
   end
+
   after :published, :create_db do
     on roles(:web) do
       within release_path do
@@ -70,20 +85,9 @@ namespace :deploy do
     end
   end
 
-  after :publishing, :restart
+  after :published, :restart
 end
 
 set :default_env, {
   PATH: '$HOME/.asdf/bin:$HOME/.asdf/shims:$PATH'
 }
-
-desc 'Copy required files'
-task :copy_required_files do
-  on roles(:app) do
-    upload! 'config/master.key', "#{release_path}/config/master.key"
-    upload! 'config/database.yml', "#{release_path}/config/database.yml"
-    upload! '.env', "#{release_path}/.env"
-  end
-end
-
-before 'deploy:assets:precompile', 'copy_required_files'
