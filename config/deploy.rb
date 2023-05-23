@@ -66,12 +66,18 @@ namespace :deploy do
 
   after :publishing, :restart
 end
+set :default_env, {
+  PATH: '$HOME/.rvm/bin:$PATH',
+  GEM_HOME: '$HOME/.rvm/gems/ruby-3.2.1',
+  GEM_PATH: '$HOME/.rvm/gems/ruby-3.2.1@global'
+}
+
 # set :default_env, {
 #   PATH: '$HOME/.rvm/gems/ruby-3.2.1/bin:$HOME/.rvm/gems/ruby-3.2.1@global/bin:$HOME/.rvm/rubies/ruby-3.2.1/bin:$PATH'
 # }
-set :default_env, {
-  PATH: '$HOME/.rvm/bin:$PATH',
-  RUBY_VERSION: 'ruby-3.2.1',
-  GEM_HOME: '$HOME/.rvm/gems/ruby-3.2.1',
-  GEM_PATH: '$HOME/.rvm/gems/ruby-3.2.1:$HOME/.rvm/gems/ruby-3.2.1@global'
-}
+# set :default_env, {
+#   PATH: '$HOME/.rvm/bin:$PATH',
+#   RUBY_VERSION: 'ruby-3.2.1',
+#   GEM_HOME: '$HOME/.rvm/gems/ruby-3.2.1',
+#   GEM_PATH: '$HOME/.rvm/gems/ruby-3.2.1:$HOME/.rvm/gems/ruby-3.2.1@global'
+# }
