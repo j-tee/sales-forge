@@ -1,6 +1,6 @@
 # config valid for current version and patch releases of Capistrano
 lock '~> 3.17.2'
-
+set :default_shell, '/bin/bash -l'
 set :application, 'sales_forge'
 set :repo_url, 'git@github.com:j-tee/sales-forge.git'
 set :tmp_dir, '/home/deploy/tmp'
