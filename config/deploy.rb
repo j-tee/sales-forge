@@ -39,34 +39,43 @@ set :ssh_options, {
 set :git_ssh_command, 'ssh -i ~/.ssh/id_ed25519'
 
 namespace :deploy do
-  after :published, :create_db do
-    on roles(:web) do
+  desc 'Create the database'
+  task :create_db do
+    on roles(:db) do
       within release_path do
         with rails_env: fetch(:rails_env) do
-          if test("bundle exec rails dbconsole -e production -c 'SELECT datname FROM pg_database WHERE datname = \"#{fetch(:application)}\"' | grep -q \"#{fetch(:application)}\"")
-            info 'Skipping db:create, database already exists'
+          if test("[ -f #{release_path.join('config/database.yml')} ]")
+            execute :bundle, :exec, 'rake db:create'
           else
-            execute :rake, 'db:create'
+            info 'Skipping db:create, database.yml not found'
           end
         end
       end
     end
   end
-  desc 'Setup a new deployment'
-  task :setup do
-    on roles(:app) do
-      # Run setup commands here
-      # For example, creating required directories, setting up environment variables, etc.
+
+  # Run database migrations
+  desc 'Run database migrations'
+  task :migrate_db do
+    on roles(:db) do
+      within release_path do
+        with rails_env: fetch(:rails_env) do
+          execute :bundle, :exec, 'rake db:migrate'
+        end
+      end
     end
   end
-  desc 'Restart application'
-  task :restart do
+
+  # Restart the application after deployment
+  after :publishing, :restart do
     on roles(:app), in: :sequence, wait: 5 do
       execute :touch, release_path.join('tmp/restart.txt')
     end
   end
 
-  after :publishing, :restart
+  # Run additional tasks after publishing is finished
+  after :published, :create_db
+  after :create_db, :migrate_db
 end
 set :default_env, {
   PATH: '$HOME/.rvm/bin:$PATH',
