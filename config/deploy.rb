@@ -67,5 +67,5 @@ namespace :deploy do
   after :publishing, :restart
 end
 set :default_env, {
-  PATH: '$HOME/.asdf/bin:$HOME/.asdf/shims:$PATH'
+  PATH: "$HOME/.rvm/bin:$PATH"
 }
