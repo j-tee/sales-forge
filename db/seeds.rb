@@ -13,5 +13,4 @@ migrated_versions = all_versions.reject { |v| v == excluded_version }
 ActiveRecord::MigrationContext.new('db/migrate').migrate(migrated_versions)
 
 # Your seed data and logic go here
-
 puts "Database seeding complete."
