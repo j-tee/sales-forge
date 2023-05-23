@@ -67,5 +67,5 @@ namespace :deploy do
   after :publishing, :restart
 end
 set :default_env, {
-  PATH: "$HOME/.rvm/bin:$PATH"
+  PATH: '$HOME/.rvm/gems/ruby-3.2.1/bin:$HOME/.rvm/gems/ruby-3.2.1@global/bin:$HOME/.rvm/rubies/ruby-3.2.1/bin:$PATH'
 }
