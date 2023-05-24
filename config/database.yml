@@ -14,5 +14,5 @@ test:
 production:
   <<: *default
   database: sales_forge_production
-  username: <%= ENV["DB_USER"] %>
+  username: 'deploy'
   password: '&&Roju11TET'
