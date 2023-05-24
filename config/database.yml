@@ -14,5 +14,5 @@ test:
 production:
   <<: *default
   database: sales_forge_production
-  username: 'deploy'
+  username: deploy
   password: '&&Roju11TET'
