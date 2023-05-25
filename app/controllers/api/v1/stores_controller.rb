@@ -24,7 +24,9 @@ class Api::V1::StoresController < ApplicationController
     def create
       @store = current_user.stores.build(store_params)
       @store.user_id = current_user.id
-  
+      unless current_user.has_role?(:admin)
+        current_user.add_role(:admin)
+      end
       if @store.save
         render json: @store, status: :created
       else
