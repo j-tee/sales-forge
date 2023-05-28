@@ -2,6 +2,11 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       # resources :taxes
+      post '/taxes/applyTaxToSpecificProducts', to: 'raxes#apply_tax_to_specific_products'
+      post '/taxes/applyTax/:tax_id', to: 'taxes#apply_tax'
+      post '/taxes/addTax', to: 'taxes#create'
+      get '/taxes/getTaxList/:store_id', to: 'taxes#tax_list'
+      get '/taxes/getTaxedProducts/:store_id/:tax_id', to: 'taxes#taxed_products'
       get '/taxes/getTaxes/:order_id', to: 'taxes#get_taxes'
       get '/employees/getEmployees/:store_id', to: 'employees#index'
       get '/employees/getEmployee/:id', to: 'employees#show'
@@ -26,6 +31,7 @@ Rails.application.routes.draw do
       get '/customers/getCustomer/:id', to: 'customers#show'
       post '/products/addProduct', to: 'products#create'
       get '/products/getProduct/:id', to: 'products#show'
+      get '/products/getProductWitoutASpecificTax/:tax_id', to: 'products#product_without_specific_tax'
       get '/stocks/getStock/:id', to: 'stocks#show'
       get '/products/getProducts/:store_id/:stock_id/:category_id/:cur_page/:items_per_page(/:product_name)(/:country)(/:manufacturer)(/:expdate)',
           to: 'products#index'
@@ -36,6 +42,7 @@ Rails.application.routes.draw do
       get '/products/getUniqueManufacturers/:stock_id/:category_id/:country/:product_name',
           to: 'products#get_unique_manafacturers'
       get '/categories/getCategories/:store_id', to: 'categories#index'
+      post '/categories/addCategory', to: 'categories#create'
     end
   end
   get '/current_user', to: 'current_user#index'

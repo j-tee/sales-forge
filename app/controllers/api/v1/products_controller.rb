@@ -3,6 +3,16 @@ class Api::V1::ProductsController < ApplicationController
   before_action :set_product, only: [:show, :update, :destroy]
   include StockHelpers
 
+  def product_without_specific_tax
+    @products = Product.joins(:product_taxes)
+                       .where.not(product_taxes: { tax_id: params[:tax_id] })
+                       .distinct
+                       .order(product_name: :asc)
+                       .select(:id, :product_name)
+    render json: @products
+  end
+  
+
   def get_unique_product_per_stock
     @product_names = Product.where(stock_id: get_stock_id).distinct.order(product_name: :asc).pluck(:product_name)
     render json: @product_names
@@ -28,7 +38,6 @@ class Api::V1::ProductsController < ApplicationController
   end
   
   def index
-    p "===================product_name : #{params[:product_name]}=========================================="
     stock_id = get_stock_id
     if stock_id
       stock = Stock.find_by(id: stock_id)
