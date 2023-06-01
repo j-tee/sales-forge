@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_05_14_173355) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_01_110146) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -92,6 +92,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_14_173355) do
     t.date "incident_date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "notifications", force: :cascade do |t|
+    t.string "type"
+    t.integer "value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "store_id", null: false
+    t.index ["store_id"], name: "index_notifications_on_store_id"
   end
 
   create_table "order_line_items", force: :cascade do |t|
@@ -291,6 +300,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_14_173355) do
   add_foreign_key "categories", "stores"
   add_foreign_key "customers", "stores"
   add_foreign_key "employees", "stores"
+  add_foreign_key "notifications", "stores"
   add_foreign_key "order_line_items", "orders"
   add_foreign_key "order_line_items", "products"
   add_foreign_key "orders", "customers"

@@ -1,6 +1,6 @@
 class Api::V1::ProductsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_product, only: [:show, :update, :destroy]
+  before_action :set_product, only: %i[show update destroy]
   include StockHelpers
 
   def product_without_specific_tax
@@ -11,133 +11,137 @@ class Api::V1::ProductsController < ApplicationController
                        .select(:id, :product_name)
     render json: @products
   end
-  
 
   def get_unique_product_per_stock
     @product_names = Product.where(stock_id: get_stock_id).distinct.order(product_name: :asc).pluck(:product_name)
     render json: @product_names
-  end  
+  end
 
-  def get_unique_unit_costs      
+  def get_unique_unit_costs
     @unit_costs = Product.where(stock_id: get_stock_id, category_id: params[:category_id]).distinct.pluck(:unit_cost)
   end
 
   def get_unique_product_names
-    @product_names = Product.where(stock_id: get_stock_id, category_id: params[:category_id], country: params[:country]).distinct.pluck(:product_name)
+    @product_names = Product.where(stock_id: get_stock_id, category_id: params[:category_id],
+                                   country: params[:country]).distinct.pluck(:product_name)
     render json: @product_names
   end
 
   def get_unique_manafacturers
-    @manufacturer = Product.where(stock_id: get_stock_id, category_id: params[:category_id], country: params[:country], product_name: params[:product_name]).distinct.pluck(:manufacturer)
+    @manufacturer = Product.where(stock_id: get_stock_id, category_id: params[:category_id], country: params[:country],
+                                  product_name: params[:product_name]).distinct.pluck(:manufacturer)
     render json: @manufacturer
   end
 
   def get_unique_countries
-    @countries = Product.where(stock_id: get_stock_id).distinct.pluck(:country);
+    @countries = Product.where(stock_id: get_stock_id).distinct.pluck(:country)
     render json: @countries
   end
-  
+
   def index
     stock_id = get_stock_id
     if stock_id
       stock = Stock.find_by(id: stock_id)
       unless stock
-        render json: { error: "Stock not found" }, status: :not_found
+        render json: { error: 'Stock not found' }, status: :not_found
         return
       end
-  
-      @products = stock.products.includes(:category).joins(:category).select("products.*, categories.name AS category_name")
+
+      @products = stock.products.includes(:category).joins(:category).select('products.*, categories.name AS category_name')
     end
-  
-      if params[:category_id].to_i > 0
-        category = Category.find_by(id: params[:category_id])
-        unless category
-          render json: { error: "Category not found" }, status: :not_found
-          return
-        end
-        @products = @products.where(category_id: params[:category_id])
+
+    if params[:category_id].to_i > 0
+      category = Category.find_by(id: params[:category_id])
+      unless category
+        render json: { error: 'Category not found' }, status: :not_found
+        return
       end
-  
-      if params[:country].present?
-        @products = @products.where(country: params[:country])
-      end
-  
-      if params[:manufacturer].present?
-        @products = @products.where(manufacturer: params[:manufacturer])
-      end
-  
-      if params[:product_name].present?
-        @products = @products.where("LOWER(product_name) LIKE ?", "%#{params[:product_name].downcase}%")
-      end
-  
-      if params[:expdate].present?
-        @products = @products.where("exp_date <= ?", params[:expdate])
-      end
-    
-  
+      @products = @products.where(category_id: params[:category_id])
+    end
+
+    @products = @products.where(country: params[:country]) if params[:country].present?
+
+    @products = @products.where(manufacturer: params[:manufacturer]) if params[:manufacturer].present?
+
+    if params[:product_name].present?
+      @products = @products.where('LOWER(product_name) LIKE ?', "%#{params[:product_name].downcase}%")
+    end
+
+    @products = @products.where('exp_date <= ?', params[:expdate]) if params[:expdate].present?
+
     @total_items = @products.count
     @products = @products.page(params[:cur_page]).per(params[:items_per_page])
-  
+
     render json: {
       products: ProductSerializer.new(@products).serializable_hash,
       pagination: { total_items: @total_items,
-                   current_page: @products.current_page,
-                   per_page: @products.limit_value }
+                    current_page: @products.current_page,
+                    per_page: @products.limit_value }
     }
   rescue ActiveRecord::RecordNotFound => e
     render json: { error: e.message }, status: :not_found
-  rescue => e
+  rescue StandardError => e
     render json: { error: e.message }, status: :internal_server_error
-  end 
-  
-     
+  end
+
   def show
     id = params[:id].to_i
     @product = if id > 0
-                 Product.find_by(id: id)
+                 Product.find_by(id:)
                else
                  Product.find_by(stock_id: get_stock_id)
                end
-  
+
     if @product
       render json: @product.to_json
     else
-      render json: { error: "Product not found" }, status: :not_found
+      render json: { error: 'Product not found' }, status: :not_found
     end
   end
-  
-  
 
-    def create
-      @product = Product.new(product_params)
-      p @product
-      if @product.save
-        render json: @product, status: :created
-      else
-        render json: @product.errors, status: :unprocessable_entity
-      end
+  def add_notification
+    @notification = Notification.new(notification_params)
+    if @notification.save
+      render json @notification, status: :created
+    else
+      render json: @notification.errors, status: :unprocessable_entity
     end
+  end
 
-    def update
-      if @product.update(product_params)
-        render json: @product
-      else
-        render json: @product.errors, status: :unprocessable_entity
-      end
+  def create
+    @product = Product.new(product_params)
+    if @product.save
+      render json: @product, status: :created
+    else
+      render json: @product.errors, status: :unprocessable_entity
     end
+  end
 
-    def destroy
-      @product.destroy
-      head :no_content
+  def update
+    if @product.update(product_params)
+      render json: @product
+    else
+      render json: @product.errors, status: :unprocessable_entity
     end
+  end
 
-    private         
+  def destroy
+    @product.destroy
+    head :no_content
+  end
 
-    def set_product
-      @product = Product.find(params[:id])
-    end
+  private
 
-    def product_params
-      params.require(:product).permit(:product_name, :unit_price, :unit_cost, :country, :manufacturer, :mnf_date, :exp_date, :qty_in_stock, :category_id, :stock_id, :picture)
-    end
+  def set_product
+    @product = Product.find(params[:id])
+  end
+
+  def notification_params
+    params.require(:notification).permit(:store_id, :type, :value)
+  end
+
+  def product_params
+    params.require(:product).permit(:product_name, :unit_price, :unit_cost, :country, :manufacturer, :mnf_date,
+                                    :exp_date, :qty_in_stock, :category_id, :stock_id, :picture)
+  end
 end
