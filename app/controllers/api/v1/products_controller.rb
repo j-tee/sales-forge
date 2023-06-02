@@ -99,10 +99,21 @@ class Api::V1::ProductsController < ApplicationController
     end
   end
 
+  def notifications
+    store_id = get_store_id
+    begin
+      @notifications = Notification.where(store_id: store_id)
+      render json: @notifications
+    rescue StandardError => e
+      render json: { error: "An error occurred while fetching notifications: #{e.message}" }, status: :unprocessable_entity
+    end
+  end
+  
+
   def add_notification
     @notification = Notification.new(notification_params)
     if @notification.save
-      render json @notification, status: :created
+      render json: @notification, status: :created
     else
       render json: @notification.errors, status: :unprocessable_entity
     end
@@ -137,7 +148,7 @@ class Api::V1::ProductsController < ApplicationController
   end
 
   def notification_params
-    params.require(:notification).permit(:store_id, :type, :value)
+    params.require(:notification).permit(:store_id, :notification_type, :value)
   end
 
   def product_params

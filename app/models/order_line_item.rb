@@ -50,7 +50,6 @@ class OrderLineItem < ApplicationRecord
     total_tax = 0
     self.product.taxes.each do |tax|
       total_tax += tax.get_tax_rate * calc_total_cost
-      p "=====tax: #{tax.name}"
       # p "====total_tax += tax.get_tax_rate * calc_total_cost=======#{total_tax}=#{tax.name}:#{tax.get_tax_rate}*#{calc_total_cost}"
     end
     total_tax
