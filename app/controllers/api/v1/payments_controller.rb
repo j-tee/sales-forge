@@ -52,6 +52,8 @@ class Api::V1::PaymentsController < ApplicationController
                   Payment.where(order_id: params[:order_id])
                 elsif params[:store_id].to_i > 0
                   Order.where(store_id: params[:store_id]).pluck(:payments)
+                elsif params[:store_id].to_i > 0 && start_date && end_date
+                  Order.where(store_id: params[:store_id], created_at: start_date..end_date).pluck(:payments)
                 else
                   []
                 end
