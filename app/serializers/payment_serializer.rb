@@ -1,6 +1,6 @@
 class PaymentSerializer
   include JSONAPI::Serializer
-  attributes :id, :amount, :total_qty, :total_cost, 
+  attributes :id, :amount, :total_qty, :total_cost, :payment_type, :order_id,
   :total_discount, :total_tax, :amount_payable, :balance
 
   belongs_to :order, class_name: 'OrderSerializer'
