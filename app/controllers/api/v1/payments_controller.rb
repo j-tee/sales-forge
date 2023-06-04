@@ -1,5 +1,5 @@
 class Api::V1::PaymentsController < ApplicationController
-  includes StoreHelpers
+  include StoreHelpers
   def index
     @payments = []
     if params[:id].to_i > 0
@@ -27,38 +27,41 @@ class Api::V1::PaymentsController < ApplicationController
 
     @payments = if customer_id > 0 && employee_id > 0 && start_date && end_date
                   Order.where(store_id: params[:store_id], order_id: params[:order_id], customer_id:,
-                              employee_id:, created_at: start_date..end_date).pluck(:payments)
+                              employee_id:, created_at: start_date..end_date).pluck(:id)
                 elsif customer_id > 0 && employee_id > 0
                   Order.where(store_id: params[:store_id], order_id: params[:order_id], customer_id:,
-                              employee_id:).pluck(:payments)
+                              employee_id:).pluck(:id)
                 elsif customer_id > 0 && start_date && end_date
                   Order.where(store_id: params[:store_id], order_id: params[:order_id], customer_id:,
-                              created_at: start_date..end_date).pluck(:payments)
+                              created_at: start_date..end_date).pluck(:id)
                 elsif employee_id > 0 && start_date && end_date
                   Order.where(store_id: params[:store_id], order_id: params[:order_id], employee_id:,
-                              created_at: start_date..end_date).pluck(:payments)
+                              created_at: start_date..end_date).pluck(:id)
                 elsif customer_id > 0
                   Order.where(store_id: params[:store_id], order_id: params[:order_id],
-                              customer_id:).pluck(:payments)
+                              customer_id:).pluck(:id)
                 elsif employee_id > 0
                   Order.where(store_id: params[:store_id], order_id: params[:order_id],
-                              employee_id:).pluck(:payments)
+                              employee_id:).pluck(:id)
                 elsif start_date && end_date
                   Order.where(store_id: params[:store_id], order_id: params[:order_id],
-                              created_at: start_date..end_date).pluck(:payments)
+                              created_at: start_date..end_date).pluck(:id)
                 elsif params[:order_id].to_i > 0 && params[:store_id].to_i > 0
-                  Order.where(store_id: params[:store_id], order_id: params[:order_id]).pluck(:payments)
+                  Order.where(store_id: params[:store_id], order_id: params[:order_id]).pluck(:id)
                 elsif params[:order_id].to_i > 0
-                  Payment.where(order_id: params[:order_id])
+                  Payment.where(order_id: params[:order_id]).pluck(:id)
                 elsif params[:store_id].to_i > 0
-                  Order.where(store_id: params[:store_id]).pluck(:payments)
+                  Order.where(store_id: params[:store_id]).pluck(:id)
                 elsif params[:store_id].to_i > 0 && start_date && end_date
-                  Order.where(store_id: params[:store_id], created_at: start_date..end_date).pluck(:payments)
+                  Order.where(store_id: params[:store_id], created_at: start_date..end_date).pluck(:id)
                 else
                   []
                 end
 
-    @payments = @payments.order(id: :desc).page(params[:page]).per(params[:per_page])
+    @payments = Payment.where(order_id: @payments)
+                       .order(id: :desc)
+                       .page(params[:page])
+                       .per(params[:per_page])
 
     if @payments.present?
       render json: {
@@ -89,6 +92,9 @@ class Api::V1::PaymentsController < ApplicationController
     payment = Payment.find_by(order_id: @payment.order_id)
     if payment.nil?
       if @payment.save
+        order = Order.find(@payment.order_id)
+        order.status = 'Complete'
+        order.save # Save the updated order status
         render json: { payment: PaymentSerializer.new(@payment).serializable_hash }, status: :created
       else
         render json: { errors: @payment.errors.full_messages }, status: :unprocessable_entity

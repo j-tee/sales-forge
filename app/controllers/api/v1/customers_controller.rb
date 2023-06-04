@@ -1,11 +1,17 @@
 class Api::V1::CustomersController < ApplicationController
   before_action :set_customer, only: %i[show edit update destroy]
   include StoreHelpers
-
-  def index
+  include StockHelpers
+  def index    
     @customers = Customer.where(store_id: get_store_id)
     render json: @customers
   end
+
+  def customer_list
+    customers = Customer.joins(:orders).where(orders: { stock_id: get_stock_id }).distinct.order(:name)
+    render json: customers
+  end
+  
 
   def customer_details
     storeId = get_store_id
