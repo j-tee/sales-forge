@@ -1,6 +1,30 @@
 class PaymentSerializer
   include JSONAPI::Serializer
   attributes :id, :amount, :payment_type, :order_id
+
+  attribute :order_date do |payment|
+    payment.order.created_at
+  end
+
+  attribute :customer_id do |payment|
+    payment.order.customer.id
+  end
+
+  attribute :customer_name do |payment|
+    payment.order.customer.name
+  end
+
+  attribute :amt_due do |payment|
+    amt = 0
+    payment.order.order_line_items.each do |item|
+      amt += item.calc_amount_payable
+    end
+    amt
+  end
+
+  attribute :payment_date do |payment|
+    payment.created_at
+  end
   # :total_discount, :total_tax, :amount_payable, :balance
 
   # belongs_to :order, class_name: 'OrderSerializer'
