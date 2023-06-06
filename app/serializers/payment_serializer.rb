@@ -21,9 +21,13 @@ class PaymentSerializer
     end
     amt
   end
-
+  
   attribute :payment_date do |payment|
-    payment.created_at
+    payment.created_at.strftime("%Y-%m-%d")
+  end
+
+  attribute :employee do |payment|
+    payment.order.employee.name
   end
   # :total_discount, :total_tax, :amount_payable, :balance
 

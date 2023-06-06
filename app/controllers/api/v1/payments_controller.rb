@@ -1,5 +1,6 @@
 class Api::V1::PaymentsController < ApplicationController
   include StoreHelpers
+  include StockHelpers
   def index
     @payments = []
     if params[:id].to_i > 0
@@ -25,37 +26,35 @@ class Api::V1::PaymentsController < ApplicationController
     start_date = params[:startDate]&.to_date
     end_date = params[:endDate]&.to_date
 
+    p '======start_date=====end_date=============='
+
     @payments = if customer_id > 0 && employee_id > 0 && start_date && end_date
-                  Order.where(store_id: params[:store_id], order_id: params[:order_id], customer_id:,
+                  Order.where(stock_id: get_stock_id, customer_id:,
                               employee_id:, created_at: start_date..end_date).pluck(:id)
                 elsif customer_id > 0 && employee_id > 0
-                  Order.where(store_id: params[:store_id], order_id: params[:order_id], customer_id:,
+                  Order.where(stock_id: get_stock_id, customer_id:,
                               employee_id:).pluck(:id)
                 elsif customer_id > 0 && start_date && end_date
-                  Order.where(store_id: params[:store_id], order_id: params[:order_id], customer_id:,
+                  Order.where(stock_id: get_stock_id, customer_id:,
                               created_at: start_date..end_date).pluck(:id)
                 elsif employee_id > 0 && start_date && end_date
-                  Order.where(store_id: params[:store_id], order_id: params[:order_id], employee_id:,
+                  Order.where(stock_id: get_stock_id, employee_id:,
                               created_at: start_date..end_date).pluck(:id)
                 elsif customer_id > 0
-                  Order.where(store_id: params[:store_id], order_id: params[:order_id],
+                  Order.where(stock_id: get_stock_id,
                               customer_id:).pluck(:id)
                 elsif employee_id > 0
-                  Order.where(store_id: params[:store_id], order_id: params[:order_id],
+                  Order.where(stock_id: get_stock_id,
                               employee_id:).pluck(:id)
                 elsif start_date && end_date
-                  Order.where(store_id: params[:store_id], order_id: params[:order_id],
+                  Order.where(stock_id: get_stock_id,
                               created_at: start_date..end_date).pluck(:id)
                 elsif params[:order_id].to_i > 0 && params[:store_id].to_i > 0
-                  Order.where(store_id: params[:store_id], order_id: params[:order_id]).pluck(:id)
+                  Order.where(stock_id: get_stock_id, id: params[:order_id]).pluck(:id)
                 elsif params[:order_id].to_i > 0
-                  Payment.where(order_id: params[:order_id]).pluck(:id)
-                elsif params[:store_id].to_i > 0
-                  Order.where(store_id: params[:store_id]).pluck(:id)
-                elsif params[:store_id].to_i > 0 && start_date && end_date
-                  Order.where(store_id: params[:store_id], created_at: start_date..end_date).pluck(:id)
+                  Payment.where(id: params[:order_id]).pluck(:id)
                 else
-                  []
+                  Order.where(stock_id: get_stock_id).pluck(:id)
                 end
 
     @payments = Payment.where(order_id: @payments)
@@ -63,19 +62,21 @@ class Api::V1::PaymentsController < ApplicationController
                        .page(params[:page])
                        .per(params[:per_page])
 
-    if @payments.present?
-      render json: {
-        payments: PaymentSerializer.new(@payments).serializable_hash,
-        pagination: {
-          total_items: @payments.total_count,
-          per_page: @payments.limit_value,
-          current_page: @payments.current_page,
-          total_pages: @payments.total_pages
-        }
-      }, status: :ok
-    else
-      render json: { error: 'No payments found.' }, status: :not_found
-    end
+    render json: {
+      payments: PaymentSerializer.new(@payments).serializable_hash,
+      pagination: {
+        total_items: @payments.total_count,
+        per_page: @payments.limit_value,
+        current_page: @payments.current_page,
+        total_pages: @payments.total_pages
+      }
+    }, status: :ok
+
+    # if @payments.present?
+
+    # else
+    #   render json: { error: 'No payments found.' }, status: :not_found
+    # end
   rescue StandardError => e
     render json: { error: e.message }, status: :internal_server_error
   end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_01_135532) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_06_124918) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -229,6 +229,34 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_01_135532) do
     t.index ["user_id"], name: "index_stores_on_user_id"
   end
 
+  create_table "subscription_discounts", force: :cascade do |t|
+    t.float "discount"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "subscription_rates", force: :cascade do |t|
+    t.float "rate"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "frequency"
+  end
+
+  create_table "subscriptions", force: :cascade do |t|
+    t.float "amount"
+    t.boolean "paid"
+    t.date "start_date"
+    t.date "end_date"
+    t.bigint "user_id", null: false
+    t.bigint "subscription_discount_id", null: false
+    t.bigint "subscription_rate_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["subscription_discount_id"], name: "index_subscriptions_on_subscription_discount_id"
+    t.index ["subscription_rate_id"], name: "index_subscriptions_on_subscription_rate_id"
+    t.index ["user_id"], name: "index_subscriptions_on_user_id"
+  end
+
   create_table "tags", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
@@ -318,6 +346,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_01_135532) do
   add_foreign_key "store_discounts", "discounts"
   add_foreign_key "store_discounts", "stores"
   add_foreign_key "stores", "users"
+  add_foreign_key "subscriptions", "subscription_discounts"
+  add_foreign_key "subscriptions", "subscription_rates"
+  add_foreign_key "subscriptions", "users"
   add_foreign_key "taxes", "stores"
   add_foreign_key "users_roles", "roles"
   add_foreign_key "users_roles", "users"
