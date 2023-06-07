@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
+      get '/subscriptions/getSubscriptions/:id/:page/:per_page'
       get '/subscriptions/getRates', to: 'subscriptions#rates'
       post '/taxes/applyTaxToSpecificProducts', to: 'raxes#apply_tax_to_specific_products'
       post '/taxes/applyTax/:tax_id', to: 'taxes#apply_tax'

@@ -1,4 +1,4 @@
-class SubscriptionsController < ApplicationController
+class Api::V1::SubscriptionsController < ApplicationController
   before_action :authenticate_user!
   include StoreHelpers
   include StockHelpers
@@ -21,6 +21,7 @@ class SubscriptionsController < ApplicationController
 
   def rates
     @rates = SubscriptionRate.all
+    render json: @rates
   end
 
 end
