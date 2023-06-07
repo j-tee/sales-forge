@@ -1,12 +1,12 @@
 Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
-      # resources :taxes
+      get '/subscriptions/getRates', to: 'subscriptions#rates'
       post '/taxes/applyTaxToSpecificProducts', to: 'raxes#apply_tax_to_specific_products'
       post '/taxes/applyTax/:tax_id', to: 'taxes#apply_tax'
       post '/taxes/addTax', to: 'taxes#create'
       post '/taxes/addProductTax', to: 'taxes#add_product_tax'
-      delete "/taxes/deleteProductTax/:product_id/:tax_id", to: "taxes#destroy_product_tax"
+      delete '/taxes/deleteProductTax/:product_id/:tax_id', to: 'taxes#destroy_product_tax'
       get '/taxes/getTaxList/:store_id', to: 'taxes#tax_list'
       get '/taxes/getTaxesOnAProduct/:product_id', to: 'taxes#taxes_on_a_product'
       get '/taxes/getTaxedProducts/:store_id/:tax_id/:page/:per_page', to: 'taxes#taxed_products'

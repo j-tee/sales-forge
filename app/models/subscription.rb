@@ -20,6 +20,6 @@ class Subscription < ApplicationRecord
   end
 
   def discount
-    subscription_discount.discount / 100
+    subscription_discount.discount 
   end
 end
