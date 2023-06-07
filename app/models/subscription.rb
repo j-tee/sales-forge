@@ -22,4 +22,12 @@ class Subscription < ApplicationRecord
   def discount
     subscription_discount.discount 
   end
+
+  def subscription_amount
+    subscription_rate.rate * user.stores.count
+  end
+
+  def tax
+    SubscriptionTax.sum(:rate) / 100
+  end
 end

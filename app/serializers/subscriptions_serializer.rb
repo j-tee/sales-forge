@@ -20,4 +20,20 @@ class SubscriptionSerializer
   attribute :discount do |sub|
     sub.discount
   end
+
+  attribute :subscription_amount do |sub|
+    sub.rate * sub.stores
+  end
+
+  attribute :tax do |sub|
+    sub.tax
+  end
+
+  attribute :tax_amount do |sub|
+    sub.subscription_amount * sub.tax
+  end
+
+  attribute :amt_due do |sub|
+    sub.subscription_amount += sub.subscription_amount * sub.tax
+  end
 end
