@@ -37,6 +37,9 @@ config.active_storage.service = :local
 
   config.serve_static_assets = true
   config.hosts << "www.sales-forge.com"
+  config.hosts << "190.92.179.150"
+  config.hosts << "pos.sales-forge.com"
+  config.hosts << "sales-forge.com"
   config.log_formatter = ::Logger::Formatter.new
   config.log_level = :info
 config.logger = Logger.new(STDOUT)
