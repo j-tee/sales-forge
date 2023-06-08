@@ -1,15 +1,11 @@
 class Api::V1::EmployeesController < ApplicationController
-    before_action :set_employee, only: [:show, :update, :destroy]
-include StoreHelpers
+  before_action :set_employee, only: %i[show update destroy]
+  include StoreHelpers
   # GET /employees
   def index
     store_id = get_store_id
-    if store_id.present?
-      @employees = Employee.includes(:store).where(store_id: store_id)
-      render json:{ employees: EmployeeSerializer.new(@employees).serializable_hash }, status: :ok
-    else
-      render json: { error: 'Invalid store ID' }, status: :unprocessable_entity
-    end
+    @employees = Employee.includes(:store).where(store_id:)
+    render json: { employees: EmployeeSerializer.new(@employees).serializable_hash }, status: :ok
   end
 
   # GET /employees/1
@@ -18,11 +14,11 @@ include StoreHelpers
     if @employee
       render json: { employee: EmployeeSerializer.new(@employee).serializable_hash }, status: :ok
     else
-      render json: { error: "Employee not found" }, status: :not_found
+      render json: { error: 'Employee not found' }, status: :not_found
     end
-  rescue => e
+  rescue StandardError => e
     render json: { error: e.message }, status: :internal_server_error
-  end  
+  end
 
   # POST /employees
   def create
@@ -50,13 +46,14 @@ include StoreHelpers
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_employee
-      @employee = Employee.find(params[:id])
-    end
 
-    # Only allow a trusted parameter "white list" through.
-    def employee_params
-      params.require(:employee).permit(:name, :email, :password_digest, :store_id)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_employee
+    @employee = Employee.find(params[:id])
+  end
+
+  # Only allow a trusted parameter "white list" through.
+  def employee_params
+    params.require(:employee).permit(:name, :email, :password_digest, :store_id)
+  end
 end

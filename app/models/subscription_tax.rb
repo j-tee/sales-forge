@@ -1,0 +1,2 @@
+class SubscriptionTax < ApplicationRecord
+end

@@ -8,8 +8,8 @@ class CurrentUserController < ApplicationController
     @user = User.where("email LIKE ?", "%#{params[:email]}%").first
     if @user
       render json: @user #UserSerialzier.new( @user).serializeable_hash[:data][:attributes], status: :ok
-    else
-      render json: { error: 'User not found' }, status: :not_found
+    # else
+    #   render json: { error: 'User not found' }, status: :not_found
     end
   end
 
