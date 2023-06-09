@@ -18,3 +18,4 @@ production:
   <<: *default
   username: deploy
   database: sales_forge_production
+  password: '&&Roju11TET'
