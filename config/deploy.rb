@@ -6,6 +6,7 @@ set :repo_url, 'git@github.com:j-tee/sales-forge.git'
 set :tmp_dir, '/home/deploy/tmp'
 set :assets_roles, []
 set :rvm_type, :system
+set :rvm_custom_path, '/home/deploy/.rvm/bin/rvm'
 set :rvm_ruby_version, 'ruby-3.2.1'
 
 set :user, 'deploy'
