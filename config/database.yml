@@ -1,7 +1,11 @@
 default: &default
   adapter: postgresql
   encoding: unicode
+  host: localhost
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  username: deploy
+  password: <%= ENV['APPNAME_DATABASE_PASSWORD'] %>
+
 
 development:
   <<: *default
@@ -14,5 +18,3 @@ test:
 production:
   <<: *default
   database: sales_forge_production
-  username: deploy
-  password: '&&Roju11TET'
