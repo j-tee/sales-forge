@@ -3,13 +3,14 @@ require 'active_support/core_ext/integer/time'
 Rails.application.configure do
   config.action_mailer.default_url_options = { host: 'www.sales-forge.com', port: 443 }
   config.action_mailer.delivery_method = :smtp
+  config.action_mailer.raise_delivery_errors = true
   config.action_mailer.smtp_settings = {
     user_name: ENV['USER_NAME'],
     password: ENV['PASSWORD'],
     domain: 'gmail.com',
     address: 'smtp.gmail.com',
     port: 587,
-    authentication: 'plain',
+    authentication: 'login',
     enable_starttls_auto: true
   }
   # Store files locally.
