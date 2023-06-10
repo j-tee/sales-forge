@@ -2,16 +2,16 @@ require 'active_support/core_ext/integer/time'
 require 'dotenv/load'
 
 Rails.application.configure do
-  config.action_mailer.default_url_options = { host: 'www.sales-forge.com' }
+  config.action_mailer.default_url_options = { host: 'www.sales-forge.com', port: 443 }
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.smtp_settings = {
-    user_name: ENV['PROD_USER_NAME'],
-    password: ENV['PROD_PASSWORD'],
+    user_name: ENV['USER_NAME'],
+    password: ENV['PASSWORD'],
     domain: 'gmail.com',
     address: 'smtp.gmail.com',
     authentication: 'plain',
-    port: 465,
+    port: 587,
     enable_starttls_auto: true
   }
   # Store files locally.
