@@ -10,6 +10,7 @@ gem 'capistrano-rvm'
 gem "bootsnap", require: false
 gem 'devise'
 gem 'devise-jwt'
+gem 'schema_to_scaffold'
 gem 'dotenv'
 gem 'activestorage'
 gem 'devise-async'
