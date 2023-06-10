@@ -1,7 +1,7 @@
 require 'active_support/core_ext/integer/time'
 
 Rails.application.configure do
-  config.action_mailer.default_url_options = { host: 'www.sales-forge.com', port: 443 }
+  config.action_mailer.default_url_options = { host: 'www.sales-forge.com' }
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.smtp_settings = {
