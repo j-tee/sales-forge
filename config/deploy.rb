@@ -71,7 +71,11 @@ namespace :deploy do
           migrations.reject! { |migration| migration.start_with?(exclude_migration) }
 
           # Run the remaining migrations
-          execute :rake, 'db:migrate', "VERSION=#{migrations.last}"
+          if migrations.any?
+            execute :rake, 'db:migrate', "VERSION=#{migrations.last}"
+          else
+            info 'No migrations to run'
+          end
         end
       end
     end
