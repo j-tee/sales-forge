@@ -61,21 +61,7 @@ namespace :deploy do
     on roles(:db) do
       within release_path do
         with rails_env: fetch(:rails_env) do
-          # Exclude the specific migration from the list
-          exclude_migration = '20230511174738_add_unconfirmed_email_to_user'
-
-          # Get the list of migrations to be run
-          migrations = capture(:rake, 'db:migrate:status').split("\n").drop(2).map(&:strip)
-
-          # Remove the specific migration from the list
-          migrations.reject! { |migration| migration.start_with?(exclude_migration) }
-
-          # Run the remaining migrations
-          if migrations.any?
-            execute :rake, 'db:migrate', "VERSION=#{migrations.last}"
-          else
-            info 'No migrations to run'
-          end
+          execute :bundle, :exec, 'rake db:schema:load'
         end
       end
     end
