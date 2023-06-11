@@ -4,6 +4,7 @@ if Rails.env.development?
       origins '*'
       resource '*',
         headers: :any,
+        expose: ['access-token', 'expiry', 'token-type', 'Authorization'],
         methods: [:get, :post, :put, :patch, :delete, :options, :head]
     end
   end

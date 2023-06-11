@@ -3,17 +3,17 @@ class Api::V1::StoresController < ApplicationController
   before_action :set_store, only: %i[show update destroy]
 
   def index
-    if (current_user.has_role?(:system_admin) || current_user.has_role?(:staff)) && params[:user_id]
-      @stores = Store.where(user_id: params[:user_id])
-    elsif current_user.has_role?(:system_admin) && !params[:user_id]
+    if current_user.has_role?(:system_admin)
       @stores = Store.all
+    elsif (current_user.has_role?(:system_admin) || current_user.has_role?(:staff)) && params[:user_id].to_i.positive?
+      @stores = Store.where(user_id: params[:user_id])
     elsif current_user.has_role?(:admin)
       @stores = Store.where(user_id: current_user.id)
     else
       render json: { error: 'You are not authorized to perform this action' }, status: :unauthorized
       return
     end
-    render json: @stores
+    render json: @stores  
   end
 
   def show
