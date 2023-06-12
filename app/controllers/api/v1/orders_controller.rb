@@ -1,4 +1,5 @@
 class Api::V1::OrdersController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_order, only: %i[show update destroy]
   include StoreHelpers
   include StockHelpers

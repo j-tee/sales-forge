@@ -33,6 +33,10 @@ class Users::RegistrationsController < Devise::RegistrationsController
     render json: { message: "Role '#{params[:role]}' added to user" }, status: :ok
   end
 
+  def add_employee_to_role
+    @user = User.where("email LIKE ?", "%#{params[:email]}%").first
+  end
+
   # DELETE /resource/remove_role
   def remove_role
     current_user.remove_role(params[:role])

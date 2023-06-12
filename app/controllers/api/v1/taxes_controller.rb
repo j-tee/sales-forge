@@ -1,10 +1,10 @@
 class Api::V1::TaxesController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_tax, only: %i[show update destroy]
   include StoreHelpers
   rescue_from StandardError, with: :handle_error
   def destroy_product_tax
     @product_tax = ProductTax.find_by(product_id: params[:product_id], tax_id: params[:tax_id])
-    p "===========product_tax==========#{@product_tax.id}"
     begin
       if @product_tax
         if @product_tax.destroyed?
@@ -16,11 +16,10 @@ class Api::V1::TaxesController < ApplicationController
         render json: { error: 'Product tax not found' }, status: :not_found
       end
     rescue StandardError => e
-      render json: { error: "An error occurred while deleting product tax: #{e.message}" }, status: :internal_server_error
+      render json: { error: "An error occurred while deleting product tax: #{e.message}" },
+             status: :internal_server_error
     end
   end
-  
-  
 
   def add_product_tax
     @product_tax = ProductTax.new(product_tax_params)
@@ -34,7 +33,7 @@ class Api::V1::TaxesController < ApplicationController
   def taxes_on_a_product
     product_id = params[:product_id].to_i
 
-    taxes = Tax.joins(:products).where(product_taxes: { product_id: product_id })
+    taxes = Tax.joins(:products).where(product_taxes: { product_id: })
     render json: TaxSerializer.new(taxes).to_json
   end
 

@@ -1,4 +1,5 @@
 class Api::V1::CategoriesController < ApplicationController
+  before_action :authenticate_user!
   include StoreHelpers
     before_action :set_category, only: [:show, :update, :destroy]
     

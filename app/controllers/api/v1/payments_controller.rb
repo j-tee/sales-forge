@@ -1,4 +1,5 @@
 class Api::V1::PaymentsController < ApplicationController
+  before_action :authenticate_user!
   include StoreHelpers
   include StockHelpers
   def index

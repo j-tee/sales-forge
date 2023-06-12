@@ -1,4 +1,5 @@
 class Api::V1::StocksController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_stock, only: [:show, :update, :destroy]
   include StoreHelpers
 

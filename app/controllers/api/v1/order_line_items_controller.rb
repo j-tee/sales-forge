@@ -1,4 +1,5 @@
 class Api::V1::OrderLineItemsController < ApplicationController
+  before_action :authenticate_user!
   include Kaminari::PageScopeMethods
   before_action :set_order_line_item, only: [:show, :update, :destroy]
   def index
