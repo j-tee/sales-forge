@@ -60,6 +60,9 @@ Rails.application.routes.draw do
   end
   get '/current_user', to: 'current_user#index'
   get '/users/:email', to: 'current_user#show_by_email'
+  get '/current_user/roles', to: 'current_user#get_roles'
+  post '/current_user/addUserToRole', to: 'current_user#add_user_to_role'
+  delete '/current_user/removeRole/:user_id/:role_id', to: 'current_user#remove_role'
   devise_for :users, path: '', path_names: {
                                  sign_in: 'login',
                                  sign_out: 'logout',

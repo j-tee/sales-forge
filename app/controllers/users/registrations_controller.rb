@@ -19,29 +19,29 @@ class Users::RegistrationsController < Devise::RegistrationsController
     end
   end
 
-  def get_roles
-    Role.all
-  end
+  # def get_roles
+  #   Role.all
+  # end
 
-  def create_role(role_name)
-    Role.create(name: role_name)
-  end
+  # def create_role(role_name)
+  #   Role.create(name: role_name)
+  # end
 
-  # PUT /resource/add_role
-  def add_role
-    current_user.add_role(params[:role])
-    render json: { message: "Role '#{params[:role]}' added to user" }, status: :ok
-  end
+  # # PUT /resource/add_role
+  # def add_role
+  #   current_user.add_role(params[:role])
+  #   render json: { message: "Role '#{params[:role]}' added to user" }, status: :ok
+  # end
 
-  def add_employee_to_role
-    @user = User.where("email LIKE ?", "%#{params[:email]}%").first
-  end
+  # def add_employee_to_role
+  #   @user = User.where("email LIKE ?", "%#{params[:email]}%").first
+  # end
 
-  # DELETE /resource/remove_role
-  def remove_role
-    current_user.remove_role(params[:role])
-    render json: { message: "Role '#{params[:role]}' removed from user" }, status: :ok
-  end
+  # # DELETE /resource/remove_role
+  # def remove_role
+  #   current_user.remove_role(params[:role])
+  #   render json: { message: "Role '#{params[:role]}' removed from user" }, status: :ok
+  # end
 
   # before_action :configure_sign_up_params, only: [:create]
   # before_action :configure_account_update_params, only: [:update]
