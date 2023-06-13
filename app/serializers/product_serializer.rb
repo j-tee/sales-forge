@@ -15,11 +15,15 @@ class ProductSerializer
   end
 
   attribute :qty_damaged do |product|
-    qty = 0
-    product.damages.each do |damaged|
-      qty += damaged.quantity
-    end
-    qty
+    product.qty_damaged
+  end
+
+  attribute :qty_of_product_sold do |product|
+    product.qty_of_product_sold
+  end
+
+  attribute :qty_available do |product|
+    product.qty_in_stock - product.qty_damaged - product.qty_of_product_sold
   end
 
   def serializable_hash
