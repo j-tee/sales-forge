@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_07_203507) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_13_103550) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -60,6 +60,16 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_07_203507) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["store_id"], name: "index_customers_on_store_id"
+  end
+
+  create_table "damages", force: :cascade do |t|
+    t.bigint "product_id", null: false
+    t.string "category"
+    t.integer "quantity"
+    t.date "damage_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["product_id"], name: "index_damages_on_product_id"
   end
 
   create_table "discounts", force: :cascade do |t|
@@ -335,6 +345,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_07_203507) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "categories", "stores"
   add_foreign_key "customers", "stores"
+  add_foreign_key "damages", "products"
   add_foreign_key "employees", "stores"
   add_foreign_key "notifications", "stores"
   add_foreign_key "order_line_items", "orders"

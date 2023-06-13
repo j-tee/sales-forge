@@ -14,6 +14,14 @@ class ProductSerializer
     product.category.name
   end
 
+  attribute :qty_damaged do |product|
+    qty = 0
+    product.damages.each do |damaged|
+      qty += damaged.quantity
+    end
+    qty
+  end
+
   def serializable_hash
     hash = super
   end
