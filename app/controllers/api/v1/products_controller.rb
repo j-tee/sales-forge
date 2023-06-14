@@ -2,6 +2,7 @@ class Api::V1::ProductsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_product, only: %i[show update destroy]
   include StockHelpers
+  include StoreHelpers
 
   def product_without_specific_tax
     @products = Product.joins(:product_taxes)
@@ -141,6 +142,31 @@ class Api::V1::ProductsController < ApplicationController
     head :no_content
   end
 
+  def damages
+    store_id = get_store_id
+    product_id = params[:product_id].to_i
+
+    store = Store.find_by(id: store_id)
+    return render json: { error: 'Store not found' }, status: :not_found unless store
+
+    if product_id.positive?
+      damages = Damage.joins(product: :stock).where('stores.id = ? AND products.id = ?', store_id, product_id)
+    else
+      damages = Damage.joins(product: :stock).where('stores.id = ?', store_id)
+    end
+
+    render json: damages
+  end
+
+  def add_damages
+    @damage = Damage.new(damage_params)
+    if @damage.save
+      render json: @damage
+    else
+      render json: @damage.errors, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def set_product
@@ -149,6 +175,9 @@ class Api::V1::ProductsController < ApplicationController
 
   def notification_params
     params.require(:notification).permit(:store_id, :notification_type, :value)
+  end
+  def damage_params
+    params.require(:damages).permit(:category, :product_id, :quantity, :damage_date)
   end
 
   def product_params
