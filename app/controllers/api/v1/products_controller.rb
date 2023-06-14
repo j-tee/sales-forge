@@ -103,13 +103,13 @@ class Api::V1::ProductsController < ApplicationController
   def notifications
     store_id = get_store_id
     begin
-      @notifications = Notification.where(store_id: store_id)
+      @notifications = Notification.where(store_id:)
       render json: @notifications
     rescue StandardError => e
-      render json: { error: "An error occurred while fetching notifications: #{e.message}" }, status: :unprocessable_entity
+      render json: { error: "An error occurred while fetching notifications: #{e.message}" },
+             status: :unprocessable_entity
     end
   end
-  
 
   def add_notification
     @notification = Notification.new(notification_params)
@@ -149,13 +149,22 @@ class Api::V1::ProductsController < ApplicationController
     store = Store.find_by(id: store_id)
     return render json: { error: 'Store not found' }, status: :not_found unless store
 
-    if product_id.positive?
-      damages = Damage.joins(product: :stock).where('stores.id = ? AND products.id = ?', store_id, product_id)
-    else
-      damages = Damage.joins(product: :stock).where('stores.id = ?', store_id)
-    end
+    @damages = if product_id.positive?
+                 Damage.joins(product: { stock: :store }).where('stores.id = ? AND products.id = ?', store_id,
+                                                                product_id)
+               else
+                 Damage.joins(product: { stock: :store }).where('stores.id = ?', store_id)
+               end
 
-    render json: damages
+    @total_items = @damages.count
+    @damages = @damages.page(params[:page]).per(params[:per_page])
+
+    render json: {
+      damages: DamageSerializer.new(@damages).serializable_hash,
+      pagination: { total_items: @total_items,
+                    page: @damages.current_page,
+                    per_page: @damages.limit_value }
+    }
   end
 
   def add_damages
@@ -176,6 +185,7 @@ class Api::V1::ProductsController < ApplicationController
   def notification_params
     params.require(:notification).permit(:store_id, :notification_type, :value)
   end
+
   def damage_params
     params.require(:damages).permit(:category, :product_id, :quantity, :damage_date)
   end

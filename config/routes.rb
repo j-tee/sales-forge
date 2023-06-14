@@ -43,7 +43,7 @@ Rails.application.routes.draw do
       post '/products/addProduct', to: 'products#create'
       post '/products/addNotification', to: 'products#add_notification'
       post '/products/addDamages', to: 'products#add_damages'
-      get '/products/getDamages/:product_id', to: 'products#damages'
+      get '/products/getDamages/:product_id/:page/:per_page', to: 'products#damages'
       get '/products/getNotifications/:store_id', to: 'products#notifications'
       get '/products/getProduct/:id', to: 'products#show'
       get '/products/getProductWitoutASpecificTax/:tax_id', to: 'products#product_without_specific_tax'
