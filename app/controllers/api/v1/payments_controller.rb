@@ -27,8 +27,6 @@ class Api::V1::PaymentsController < ApplicationController
     start_date = params[:startDate]&.to_date
     end_date = params[:endDate]&.to_date
 
-    p '======start_date=====end_date=============='
-
     @payments = if customer_id > 0 && employee_id > 0 && start_date && end_date
                   Order.where(stock_id: get_stock_id, customer_id:,
                               employee_id:, created_at: start_date..end_date).pluck(:id)
