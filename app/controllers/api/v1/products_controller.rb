@@ -39,7 +39,6 @@ class Api::V1::ProductsController < ApplicationController
     render json: @countries
   end
 
-
   def index
     stock_id = get_stock_id
     if stock_id
