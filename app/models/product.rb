@@ -10,10 +10,17 @@ class Product < ApplicationRecord
   def checked?
     false
   end
+
+  def qty_expired
+    qty = 0
+    qty = qty_in_stock - qty_of_product_sold - qty_damaged if exp_date < Date.now
+    qty
+  end
+
   def qty_damaged
     qty = 0
     damages.each do |damaged|
-      qty += damaged.quantity;
+      qty += damaged.quantity
     end
     qty
   end
@@ -24,5 +31,25 @@ class Product < ApplicationRecord
       qty += item.quantity
     end
     qty
+  end
+
+  def total_cost
+    qty_in_stock * unit_cost
+  end
+
+  def expected_revenue
+    qty_in_stock * unit_price
+  end
+
+  def actual_revenue
+    qty_of_product_sold * unit_price
+  end
+
+  def cost_of_damages
+    unit_cost * qty_damaged
+  end
+
+  def cost_of_expired_products
+    qty_expired * unit_cost
   end
 end

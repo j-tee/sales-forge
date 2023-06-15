@@ -39,6 +39,18 @@ class Api::V1::ProductsController < ApplicationController
     render json: @countries
   end
 
+  # def sales_summary
+  #   store_id = get_store_id
+  #   if store_id
+  #     store = Stock.find_by(id: store_id)
+  #     unless store
+  #       render json: { error: 'Store not found' }, status: :not_found
+  #       return
+  #     end
+  #     @products = stock.products.includes(:category).joins(:category).select('products.*, categories.name AS category_name')
+  #   end
+  # end
+
   def index
     stock_id = get_stock_id
     if stock_id
