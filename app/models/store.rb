@@ -6,7 +6,7 @@ class Store < ApplicationRecord
   def cost_of_expired_products
     expired = 0
     stocks.each do |stock|
-      expired += stock.product.cost_of_expired_products
+      expired += stock.cost_of_expired_products
     end
     expired
   end
@@ -23,7 +23,7 @@ class Store < ApplicationRecord
   def cost_of_damages
     damages = 0
     stocks.each do |stock|
-      damages += stock.product.cost_of_damages
+      damages += stock.cost_of_damages
     end
     damages
   end
@@ -31,7 +31,7 @@ class Store < ApplicationRecord
   def expected_revenue
     revenue = 0
     stocks.each do |stock|
-      revenue += stock.product.expected_revenue
+      revenue += stock.expected_revenue
     end
     revenue
   end
@@ -39,7 +39,15 @@ class Store < ApplicationRecord
   def actual_revenue
     revenue = 0
     stocks.each do |stock|
-      revenue += stock.product.actual_revenue
+      revenue += stock.actual_revenue
+    end
+    revenue
+  end
+
+  def cost_of_quantity_sold
+    revenue = 0
+    stocks.each do |stock|
+      revenue += stock.cost_of_quantity_sold
     end
     revenue
   end
@@ -58,5 +66,21 @@ class Store < ApplicationRecord
       qty += stock.expired
     end
     qty
+  end
+
+  def expected_balance
+    balance = 0
+    stocks.each do |stock|
+      balance += stock.expected_balance
+    end
+    balance
+  end
+
+  def bad_debt
+    debt = 0
+    stocks.each do |stock|
+      debt += stock.bad_debt
+    end
+    debt
   end
 end

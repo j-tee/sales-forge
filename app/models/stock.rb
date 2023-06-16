@@ -25,6 +25,14 @@ class Stock < ApplicationRecord
     end
   end
 
+  def cost_of_quantity_sold
+    cost = 0
+    products.each do |product|
+      cost += product.cost_of_quantity_sold
+    end
+    cost
+  end
+
   def total_cost
     total_cost = 0
     products.each do |product|
@@ -63,5 +71,21 @@ class Stock < ApplicationRecord
       expired += product.cost_of_expired_products
     end
     expired
+  end
+
+  def expected_balance
+    balance = 0
+    products.each do |product|
+      balance += product.expected_balance
+    end
+    balance
+  end
+
+  def bad_debt
+    debt = 0
+    products.each do |product|
+      debt += product.bad_debt
+    end
+    debt
   end
 end

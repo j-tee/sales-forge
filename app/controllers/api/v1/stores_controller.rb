@@ -1,6 +1,7 @@
 class Api::V1::StoresController < ApplicationController
   before_action :authenticate_user!
   before_action :set_store, only: %i[show update destroy]
+  include StoreHelpers
 
   def index
     if current_user.has_role?(:system_admin)
@@ -13,7 +14,12 @@ class Api::V1::StoresController < ApplicationController
       render json: { error: 'You are not authorized to perform this action' }, status: :unauthorized
       return
     end
-    render json: @stores  
+    render json: @stores
+  end
+
+  def inventory_summary
+    @stores = Store.where(id: get_store_id)
+    render json: { stores: StoreSerializer.new(@stores).serializable_hash }
   end
 
   def show

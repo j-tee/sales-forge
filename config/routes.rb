@@ -33,6 +33,7 @@ Rails.application.routes.draw do
       get '/orders/getOrders/:store_id/:customer_id/:status', to: 'orders#index'
       get '/orders/getOrderDetails/:stock_id/:customer_id/:employee_id/:status/:page/:per_page', to: 'orders#order_details'
       post '/stores/registerStore', to: 'stores#create'
+      get '/stores/getInventorySummary', to: 'stores#inventory_summary'
       get '/stores/:user_id', to: 'stores#index'
       post '/customers/addCustomer', to: 'customers#create'
       post '/customers/resetCustomer', to: 'customers#reset'

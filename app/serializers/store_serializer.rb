@@ -29,4 +29,28 @@ class StoreSerializer
   attribute :expired do |store|
     store.expired
   end
+
+  attribute :cost_of_quantity_sold do |store|
+    store.cost_of_quantity_sold
+  end
+
+  attribute :current_balance do |store|
+    store.actual_revenue - store.cost_of_quantity_sold
+  end
+
+  attribute :expected_balance do |store|
+    store.expected_balance
+  end
+
+  attribute :bad_debt do |store|
+    store.bad_debt
+  end
+
+  attribute :net_income do |store|
+    store.actual_revenue - store.bad_debt
+  end
+
+  def serializable_hash
+    hash = super
+  end
 end
