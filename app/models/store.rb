@@ -11,7 +11,6 @@ class Store < ApplicationRecord
     expired
   end
 
-
   def total_cost
     total_cost = 0
     stocks.each do |stock|

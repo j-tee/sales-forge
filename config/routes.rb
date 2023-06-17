@@ -33,7 +33,7 @@ Rails.application.routes.draw do
       get '/orders/getOrders/:store_id/:customer_id/:status', to: 'orders#index'
       get '/orders/getOrderDetails/:stock_id/:customer_id/:employee_id/:status/:page/:per_page', to: 'orders#order_details'
       post '/stores/registerStore', to: 'stores#create'
-      get '/stores/getInventorySummary', to: 'stores#inventory_summary'
+      get '/stores/getInventorySummary/:store_id/:stock_id/:category_id/:product_name', to: 'stores#inventory_summary'
       get '/stores/:user_id', to: 'stores#index'
       post '/customers/addCustomer', to: 'customers#create'
       post '/customers/resetCustomer', to: 'customers#reset'
@@ -55,6 +55,7 @@ Rails.application.routes.draw do
       get '/products/getUniqueCosts/:stock_id/:category_id', to: 'products#get_unique_unit_costs'
       get '/products/getUniqueProducts/:stock_id/:category_id/:country', to: 'products#get_unique_product_names'
       get '/products/getUniqueProductNamesByStock/:stock_id', to: 'products#get_unique_product_per_stock'
+      get '/products/getUniqueProductNamesByCategory/:category_id', to: 'products#unique_product_names_by_category'
       get '/products/getUniqueManufacturers/:stock_id/:category_id/:country/:product_name',
           to: 'products#get_unique_manafacturers'
       get '/categories/getCategories/:store_id', to: 'categories#index'

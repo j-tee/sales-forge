@@ -18,8 +18,19 @@ class Api::V1::StoresController < ApplicationController
   end
 
   def inventory_summary
-    @stores = Store.where(id: get_store_id)
-    render json: { stores: StoreSerializer.new(@stores).serializable_hash }
+    stores = Store.includes(stocks: :products).where(id: get_store_id)
+
+    stores = stores.where(stocks: { id: params[:stock_id].to_i }) if params[:stock_id].to_i.positive?
+
+    if params[:category_id].to_i.positive?
+      stores = stores.where(stocks: { products: { category_id: params[:category_id].to_i } })
+    end
+
+    if params[:product_name].present? && params[:product_name] != 'null'
+      stores = stores.where(stocks: { products: { product_name: params[:product_name] } })
+    end
+
+    render json: { stores: StoreSerializer.new(stores).serializable_hash }
   end
 
   def show

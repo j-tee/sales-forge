@@ -13,6 +13,11 @@ class Api::V1::ProductsController < ApplicationController
     render json: @products
   end
 
+  def unique_product_names_by_category
+    @product_names = Product.where(category_id: params[:category_id]).distinct.order(product_name: :asc).pluck(:product_name)
+    render json: @product_names
+  end
+
   def get_unique_product_per_stock
     @product_names = Product.where(stock_id: get_stock_id).distinct.order(product_name: :asc).pluck(:product_name)
     render json: @product_names
