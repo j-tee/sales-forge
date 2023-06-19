@@ -196,7 +196,7 @@ class Api::V1::ProductsController < ApplicationController
   end
 
   def product_params
-    params.require(:product).permit(:product_name, :unit_price, :unit_cost, :country, :manufacturer, :mnf_date,
+    params.require(:product).permit(:id, :product_name, :unit_price, :unit_cost, :description, :country, :manufacturer, :mnf_date,
                                     :exp_date, :qty_in_stock, :category_id, :stock_id, :picture)
   end
 end
