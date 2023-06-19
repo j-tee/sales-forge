@@ -6,6 +6,14 @@ class ProductSerializer
     product.mnf_date&.strftime('%m/%d/%Y')
   end
 
+  attribute :store_name do |product|
+    product.stock.store.name
+  end
+
+  attribute :stock_details do |product|
+    "#{product.stock_id} #{product.stock&.stock_date&.strftime('%m/%d/%Y')}"
+  end
+
   attribute :formatted_exp_date do |product|
     product.exp_date&.strftime('%m/%d/%Y')
   end
