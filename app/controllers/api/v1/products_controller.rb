@@ -78,11 +78,17 @@ class Api::V1::ProductsController < ApplicationController
     @total_items = @products.count
     @products = @products.page(params[:cur_page]).per(params[:items_per_page])
 
+  
+    curr_sales = Payment.where(created_at: (Date.today-1..Date.today+1))
+                        .where(order_id: Order.where(stock_id: Stock.where(store_id: get_store_id)).pluck(:id))
+                        .sum(:amount)
+
     render json: {
       products: ProductSerializer.new(@products).serializable_hash,
       pagination: { total_items: @total_items,
                     current_page: @products.current_page,
-                    per_page: @products.limit_value }
+                    per_page: @products.limit_value },
+      sales: curr_sales
     }
   rescue ActiveRecord::RecordNotFound => e
     render json: { error: e.message }, status: :not_found
