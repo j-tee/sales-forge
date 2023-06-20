@@ -13,7 +13,7 @@ class Users::ConfirmationsController < Devise::ConfirmationsController
     if resource.persisted?
       redirect_to "#{base_url}/confirmation/?result=success"
     else
-      redirect_to "#{base_url}/confirmation/result=failure"
+      redirect_to "#{base_url}/confirmation/?result=failure"
     end
   end
 
