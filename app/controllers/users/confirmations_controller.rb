@@ -2,21 +2,33 @@
 
 class Users::ConfirmationsController < Devise::ConfirmationsController
   include RackSessionFix
-  respond_to :json
+  include ActionController::Flash
+  respond_to :html
+
   private
 
   def respond_with(resource, _opts = {})
+    base_url = Rails.env.production? ? ENV['REACT_APP_BASE_URL'] : 'http://localhost:3001'
+
     if resource.persisted?
-      render json: {
-        status: { code: 200, message: 'Confirmed sucessfully.' },
-        data: UserSerializer.new(resource).serializable_hash[:data][:attributes]
-      }
+      redirect_to "#{base_url}/confirmation/?result=success"
     else
-      render json: {
-        status: { code: 422, message: "User couldn't be confirmed successfully. #{resource.errors.full_messages.to_sentence}" }
-      }, status: :unprocessable_entity
+      redirect_to "#{base_url}/confirmation/result=failure"
     end
   end
+
+  # def respond_with(resource, _opts = {})
+  #   if resource.persisted?
+  #     render json: {
+  #       status: { code: 200, message: 'Confirmed sucessfully.' },
+  #       data: UserSerializer.new(resource).serializable_hash[:data][:attributes]
+  #     }
+  #   else
+  #     render json: {
+  #       status: { code: 422, message: "User couldn't be confirmed successfully. #{resource.errors.full_messages.to_sentence}" }
+  #     }, status: :unprocessable_entity
+  #   end
+  # end
   # GET /resource/confirmation/new
   # def new
   #   super
