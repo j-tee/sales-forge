@@ -6,16 +6,16 @@ class Users::ConfirmationsController < Devise::ConfirmationsController
   respond_to :html
 
   private
+
   def respond_with(resource, _opts = {})
-    base_url = ENV['REACT_APP_BASE_URL']
+    base_url = Rails.env.production? ? ENV['REACT_APP_BASE_URL'] : 'http://localhost:3001'
   
     if resource.persisted?
-      redirect_to File.join(base_url, '/confirmation/?result=success'), allow_other_host: true
+      redirect_to "#{base_url}/confirmation/?result=success", allow_other_host: true
     else
-      redirect_to File.join(base_url, '/confirmation/?result=failure'), allow_other_host: true
+      redirect_to "#{base_url}/confirmation/?result=failure", allow_other_host: true
     end
-  end
-  
+  end  
 
   # def respond_with(resource, _opts = {})
   #   if resource.persisted?
