@@ -11,9 +11,9 @@ class Users::ConfirmationsController < Devise::ConfirmationsController
     base_url = Rails.env.production? ? ENV['REACT_APP_BASE_URL'] : 'http://localhost:3001'
 
     if resource.persisted?
-      redirect_to "#{base_url}/confirmation/?result=success"
+      redirect_to "#{base_url}/confirmation/?result=success", allow_other_host: true
     else
-      redirect_to "#{base_url}/confirmation/?result=failure"
+      redirect_to "#{base_url}/confirmation/?result=failure", allow_other_host: true
     end
   end
 
