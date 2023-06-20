@@ -79,7 +79,7 @@ class Api::V1::ProductsController < ApplicationController
     @products = @products.page(params[:cur_page]).per(params[:items_per_page])
 
   
-    curr_sales = Payment.where(created_at: (Date.today-1..Date.today+1))
+    curr_sales = Payment.where(created_at: Date.today.beginning_of_day..Date.today.end_of_day)
                         .where(order_id: Order.where(stock_id: Stock.where(store_id: get_store_id)).pluck(:id))
                         .sum(:amount)
 
@@ -187,7 +187,20 @@ class Api::V1::ProductsController < ApplicationController
     end
   end
 
+  def update_damages
+    set_damages
+    if @damage.update(damage_params)
+      render json: @damage
+    else
+      render json: @damage.errors, status: :unprocessable_entity
+    end
+  end
+
   private
+
+  def set_damages
+    @damage = Damage.find(params[:id])
+  end
 
   def set_product
     @product = Product.find(params[:id])
@@ -198,7 +211,7 @@ class Api::V1::ProductsController < ApplicationController
   end
 
   def damage_params
-    params.require(:damages).permit(:category, :product_id, :quantity, :damage_date)
+    params.require(:damages).permit(:id, :category, :product_id, :quantity, :damage_date)
   end
 
   def product_params

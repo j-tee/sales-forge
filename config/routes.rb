@@ -47,6 +47,7 @@ Rails.application.routes.draw do
       put '/products/updateProduct/:id', to: 'products#update'
       post '/products/addNotification', to: 'products#add_notification'
       post '/products/addDamages', to: 'products#add_damages'
+      put '/products/updateDamages/:id', to: 'products#update_damages'
       get '/products/getDamages/:product_id/:page/:per_page', to: 'products#damages'
       get '/products/getNotifications/:store_id', to: 'products#notifications'
       get '/products/getProduct/:id', to: 'products#show'
